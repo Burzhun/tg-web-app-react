@@ -1,85 +1,103 @@
-import React, {useState} from 'react';
-import './ProductList.css';
+import React, { useState, useEffect } from "react";
+import "./ProductList.css";
 import ProductItem from "../ProductItem/ProductItem";
-import {useTelegram} from "../../hooks/useTelegram";
-import {useCallback, useEffect} from "react";
-
-const products = [
-    {id: '1', title: 'Джинсы', price: 5000, description: 'Синего цвета, прямые'},
-    {id: '2', title: 'Куртка', price: 12000, description: 'Зеленого цвета, теплая'},
-    {id: '3', title: 'Джинсы 2', price: 5000, description: 'Синего цвета, прямые'},
-    {id: '4', title: 'Куртка 8', price: 122, description: 'Зеленого цвета, теплая'},
-    {id: '5', title: 'Джинсы 3', price: 5000, description: 'Синего цвета, прямые'},
-    {id: '6', title: 'Куртка 7', price: 600, description: 'Зеленого цвета, теплая'},
-    {id: '7', title: 'Джинсы 4', price: 5500, description: 'Синего цвета, прямые'},
-    {id: '8', title: 'Куртка 5', price: 12000, description: 'Зеленого цвета, теплая'},
-]
+import { useTelegram } from "../../hooks/useTelegram";
+import { db } from "../firebase/config";
+import { collection, addDoc, query, getDocs, where } from "firebase/firestore";
+import Header from "../Header";
+import { Button } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
 
 const getTotalPrice = (items = []) => {
-    return items.reduce((acc, item) => {
-        return acc += item.price
-    }, 0)
-}
-
+  return items.reduce((acc, item) => {
+    return (acc += item.price);
+  }, 0);
+};
+let categories = {};
 const ProductList = () => {
-    const [addedItems, setAddedItems] = useState([]);
-    const {tg, queryId} = useTelegram();
+  const [addedItems, setAddedItems] = useState([]);
+  const [items, setItems] = useState([]);
+  const { tg, queryId } = useTelegram();
+  const navigate = useNavigate();
+  const params = useParams();
+  const category = params.category || "";
 
-    const onSendData = useCallback(() => {
-        const data = {
-            products: addedItems,
-            totalPrice: getTotalPrice(addedItems),
-            queryId,
-        }
-        fetch('http://85.119.146.179:8000/web-data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        })
-    }, [addedItems])
+  useEffect(() => {
+    loadData();
+  }, [category]);
 
-    useEffect(() => {
-        tg.onEvent('mainButtonClicked', onSendData)
-        return () => {
-            tg.offEvent('mainButtonClicked', onSendData)
-        }
-    }, [onSendData])
+  const loadData = async () => {
+    let q = query(collection(db, "categories"));
+    let querySnapshot = await getDocs(q);
+    querySnapshot.docs.forEach((doc) => {
+      categories[doc.id] = doc.data().title;
+    });
 
-    const onAdd = (product) => {
-        const alreadyAdded = addedItems.find(item => item.id === product.id);
-        let newItems = [];
+    q = query(collection(db, "items"));
+    if (category) {
+      const catId = Object.keys(categories).find((c) => categories[c] === category);
+      console.log(catId);
+      q = query(collection(db, "items"), where("category", "==", catId));
+    }
+    querySnapshot = await getDocs(q);
+    setItems(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+  };
 
-        if(alreadyAdded) {
-            newItems = addedItems.filter(item => item.id !== product.id);
-        } else {
-            newItems = [...addedItems, product];
-        }
+  useEffect(() => {
+    loadData();
 
-        setAddedItems(newItems)
+    // tg.onEvent("mainButtonClicked", onSendData);
+    // return () => {
+    //   tg.offEvent("mainButtonClicked", onSendData);
+    // };
+  }, []);
+  const onAdd = (product) => {
+    const alreadyAdded = addedItems.find((item) => item.id === product.id);
+    let newItems = [];
 
-        if(newItems.length === 0) {
-            tg.MainButton.hide();
-        } else {
-            tg.MainButton.show();
-            tg.MainButton.setParams({
-                text: `Купить ${getTotalPrice(newItems)}`
-            })
-        }
+    if (alreadyAdded) {
+      newItems = addedItems.filter((item) => item.id !== product.id);
+    } else {
+      newItems = [...addedItems, product];
     }
 
-    return (
-        <div className={'list'}>
-            {products.map(item => (
-                <ProductItem
-                    product={item}
-                    onAdd={onAdd}
-                    className={'item'}
-                />
-            ))}
+    setAddedItems(newItems);
+
+    if (newItems.length === 0) {
+      tg.MainButton.hide();
+    } else {
+      tg.MainButton.show();
+      tg.MainButton.setParams({
+        text: `Купить ${getTotalPrice(newItems)}`,
+      });
+    }
+  };
+
+  return (
+    <div>
+      <Header />
+      <div style={{ textAlign: "center" }}>
+        <Button
+          onClick={() => {
+            navigate("/items/add");
+          }}
+          className="addItemButton"
+        >
+          Добавить товар
+        </Button>
+      </div>
+      {category && (
+        <div style={{ fontSize: "20px", margin: "10px" }}>
+          Товары категории <span style={{ color: "#1bb3ff" }}>{category}</span>
         </div>
-    );
+      )}
+      <div className={"list"}>
+        {items.map((item) => (
+          <ProductItem key={item.id} category={categories[item.category]} item={item} />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default ProductList;

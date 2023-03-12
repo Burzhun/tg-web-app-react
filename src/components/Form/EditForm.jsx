@@ -5,10 +5,10 @@ import { useTelegram } from "../../hooks/useTelegram";
 import { storage, db } from "../firebase/config";
 import { collection, addDoc, query, getDocs, doc, updateDoc, getDoc, where } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { NavLink, useHistory, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useHistory, useParams } from "react-router-dom";
 import Header from "../Header";
 
-const Form = () => {
+const EditForm = () => {
   const urlParams = useParams();
   const [itemId, setItemId] = useState(null);
   const [title, setTitle] = useState("");
@@ -20,7 +20,6 @@ const Form = () => {
   const [imageAsFile, setImageAsFile] = useState("");
   const [imageAsUrl, setImageAsUrl] = useState("");
   const { tg } = useTelegram();
-  const navigate = useNavigate();
 
   const handleImageAsFile = (e) => {
     const image = e.target.files[0];
@@ -109,7 +108,6 @@ const Form = () => {
       updateDoc(doc(db, "items", itemId), data)
         .then((res) => {
           openNotification();
-          navigate("/items/");
         })
         .catch((error) => {
           console.log(error);
@@ -119,7 +117,6 @@ const Form = () => {
         .then((docRef) => {
           console.log("Document has been added successfully");
           openNotification();
-          navigate("/items/");
         })
         .catch((error) => {
           console.log(error);
@@ -166,10 +163,10 @@ const Form = () => {
         }}
         type="primary"
       >
-        {urlParams.id ? "Изменить товар" : "Добавить товар"}
+        Добавить товар
       </Button>
     </div>
   );
 };
 
-export default Form;
+export default EditForm;
