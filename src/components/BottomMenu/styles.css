@@ -1,0 +1,21 @@
+#bottomMenu {
+  position: fixed;
+  height: 70px;
+  top: calc(100vh - 70px);
+  width: 102%;
+  left: -1%;
+  display: flex;
+  justify-content: space-between;
+}
+
+#bottomMenu .menu {
+  display: flex;
+  height: 70px;
+  background-color: white;
+  color: black;
+  flex-grow: 1;
+  align-items: center;
+  border: 1px solid #33333373;
+  flex-basis: 0;
+  justify-content: center;
+}

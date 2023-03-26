@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import "./Form.css";
 import { Button, Input, notification, Select } from "antd";
 import { useTelegram } from "../../hooks/useTelegram";
-import { storage, db } from "../firebase/config";
+import { storage, db, loadDataDB } from "../firebase/config";
 import { collection, addDoc, query, getDocs, doc, updateDoc, getDoc, where } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { NavLink, useHistory, useNavigate, useParams } from "react-router-dom";
@@ -34,9 +34,7 @@ const Form = () => {
 
   const loadCategories = useCallback(async () => {
     console.log(urlParams);
-    const q = query(collection(db, "categories"));
-    const querySnapshot = await getDocs(q);
-    setCategoriesList(querySnapshot.docs.map((doc) => ({ id: doc.id, title: doc.data().title })));
+    setCategoriesList(await loadDataDB("categories"));
     if (urlParams.id) {
       setItemId(urlParams.id);
       const docRef = doc(db, "items", urlParams.id);
@@ -129,7 +127,6 @@ const Form = () => {
 
   return (
     <div className={"form"}>
-      <Header />
       <h3>Добавление товара</h3>
       <Input className={"input"} type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={"Название"} />
       <Input className={"input"} type="number" value={number} onChange={(e) => setNumber(parseInt(e.target.value))} placeholder={"Количество"} />

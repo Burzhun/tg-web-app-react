@@ -32,10 +32,7 @@ const EditForm = () => {
   };
 
   const loadCategories = useCallback(async () => {
-    console.log(urlParams);
-    const q = query(collection(db, "categories"));
-    const querySnapshot = await getDocs(q);
-    setCategoriesList(querySnapshot.docs.map((doc) => ({ id: doc.id, title: doc.data().title })));
+    setCategoriesList(await loadDataDB("categories"));
     if (urlParams.id) {
       setItemId(urlParams.id);
       const docRef = doc(db, "items", urlParams.id);
@@ -126,7 +123,6 @@ const EditForm = () => {
 
   return (
     <div className={"form"}>
-      <Header />
       <h3>Добавление товара</h3>
       <Input className={"input"} type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={"Название"} />
       <Input className={"input"} type="number" value={number} onChange={(e) => setNumber(parseInt(e.target.value))} placeholder={"Количество"} />

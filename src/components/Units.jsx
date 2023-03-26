@@ -8,14 +8,13 @@ import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 
-const Categories = () => {
-  const [addedItems, setAddedItems] = useState([]);
-  const [categories, setCategories] = useState([]);
+const Units = () => {
+  const [units, setUnits] = useState([]);
   const { tg, queryId } = useTelegram();
   const navigate = useNavigate();
 
   const loadData = async () => {
-    setCategories(await loadDataDB("categories"));
+    setUnits(await loadDataDB("unit"));
   };
 
   useEffect(() => {
@@ -27,32 +26,30 @@ const Categories = () => {
     // };
   }, []);
 
-  const openCategory = (title) => {
-    navigate("/category/" + title);
+  const openCategory = (id) => {
+    navigate("/units/add/" + id);
   };
 
   return (
     <div>
-      <Header active="categories" />
+      <Header active="units" />
       <div style={{ textAlign: "center" }}>
         <Button
           onClick={() => {
-            navigate("/category/add");
+            navigate("/units/add");
           }}
           className="addCategoryButton"
         >
-          Добавить категорию
+          Добавить ед. изм.
         </Button>
       </div>
       <div className={"list"}>
-        {categories.map((category) => (
+        {units.map((unit) => (
           <div>
-            <div onClick={() => navigate("/items/" + category.title)} className="categoryItem">
-              {category.title}
-            </div>
+            <div className="categoryItem">{unit.name}</div>
             <EditOutlined
               onClick={() => {
-                openCategory(category.title);
+                openCategory(unit.id);
               }}
             />
           </div>
@@ -62,4 +59,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default Units;

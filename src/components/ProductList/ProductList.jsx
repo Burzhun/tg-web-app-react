@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./ProductList.css";
 import ProductItem from "../ProductItem/ProductItem";
 import { useTelegram } from "../../hooks/useTelegram";
-import { db } from "../firebase/config";
+import { db, loadDataDB } from "../firebase/config";
 import { collection, addDoc, query, getDocs, where } from "firebase/firestore";
 import Header from "../Header";
-import { Button } from "antd";
+import { Button, Table } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 
 const getTotalPrice = (items = []) => {
@@ -13,7 +13,34 @@ const getTotalPrice = (items = []) => {
     return (acc += item.price);
   }, 0);
 };
+let units = {};
 let categories = {};
+const columns = [
+  {
+    title: "Наим. товара",
+    dataIndex: "title",
+    key: "title",
+  },
+  {
+    title: "Ед. изм.",
+    dataIndex: "unit",
+    key: "unit",
+  },
+  {
+    title: "Кол. шт",
+    dataIndex: "number",
+    key: "number",
+  },
+];
+const loadRelatedData = async (table) => {
+  let t = {};
+  let querySnapshot = await loadDataDB(table);
+  querySnapshot.forEach((doc) => {
+    t[doc.id] = doc;
+  });
+  return t;
+};
+let orderedItems = null;
 const ProductList = () => {
   const [addedItems, setAddedItems] = useState([]);
   const [items, setItems] = useState([]);
@@ -22,25 +49,32 @@ const ProductList = () => {
   const params = useParams();
   const category = params.category || "";
 
-  useEffect(() => {
-    loadData();
-  }, [category]);
-
   const loadData = async () => {
-    let q = query(collection(db, "categories"));
-    let querySnapshot = await getDocs(q);
-    querySnapshot.docs.forEach((doc) => {
-      categories[doc.id] = doc.data().title;
+    console.log(orderedItems);
+    if (orderedItems) return;
+    orderedItems = {};
+    const orders = await loadDataDB("orders");
+    orders.forEach((order) => {
+      if (!orderedItems[order.item]) orderedItems[order.item] = 0;
+      if (order.number) orderedItems[order.item] += order.number;
     });
 
-    q = query(collection(db, "items"));
+    let querySnapshot = await loadDataDB("categories");
+    querySnapshot.forEach((doc) => {
+      categories[doc.id] = doc.title;
+    });
+
+    let where = null;
     if (category) {
       const catId = Object.keys(categories).find((c) => categories[c] === category);
-      console.log(catId);
-      q = query(collection(db, "items"), where("category", "==", catId));
+      where = where("category", "==", catId);
     }
-    querySnapshot = await getDocs(q);
-    setItems(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    querySnapshot = await loadDataDB("items");
+    console.log(orderedItems);
+    querySnapshot.forEach((item) => {
+      if (orderedItems[item.id]) item.number -= orderedItems[item.id];
+    });
+    setItems(querySnapshot);
   };
 
   useEffect(() => {
@@ -50,7 +84,11 @@ const ProductList = () => {
     // return () => {
     //   tg.offEvent("mainButtonClicked", onSendData);
     // };
+    return () => {
+      orderedItems = null;
+    };
   }, []);
+
   const onAdd = (product) => {
     const alreadyAdded = addedItems.find((item) => item.id === product.id);
     let newItems = [];
@@ -75,9 +113,32 @@ const ProductList = () => {
 
   return (
     <div>
-      <Header />
-      <div style={{ textAlign: "center" }}>
+      {category && (
+        <div style={{ fontSize: "20px", margin: "10px" }}>
+          Товары категории <span style={{ color: "#1bb3ff" }}>{category}</span>
+        </div>
+      )}
+      {/* <div className={"list"}>
+        {items.map((item) => (
+          <ProductItem key={item.id} category={categories[item.category]} item={item} />
+        ))}
+      </div> */}
+      <div className={"list"}>
+        <Table
+          columns={columns}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: (event) => {
+                navigate("/items/add/" + record.id);
+              }, // click row
+            };
+          }}
+          dataSource={items}
+        />
+      </div>
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
         <Button
+          style={{ padding: "13px", height: "50px" }}
           onClick={() => {
             navigate("/items/add");
           }}
@@ -85,16 +146,6 @@ const ProductList = () => {
         >
           Добавить товар
         </Button>
-      </div>
-      {category && (
-        <div style={{ fontSize: "20px", margin: "10px" }}>
-          Товары категории <span style={{ color: "#1bb3ff" }}>{category}</span>
-        </div>
-      )}
-      <div className={"list"}>
-        {items.map((item) => (
-          <ProductItem key={item.id} category={categories[item.category]} item={item} />
-        ))}
       </div>
     </div>
   );

@@ -17,10 +17,8 @@ const CategoryItem = () => {
 
   const loadData = async () => {
     if (!params.title) return;
-    const q = query(collection(db, "categories"), where("title", "==", params.title));
-    console.log(q);
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.docs.length) setCategory(querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))[0]);
+    const querySnapshot = await loadDataDB("categories", where("title", "==", params.title));
+    if (querySnapshot.length) setCategory(querySnapshot[0]);
   };
 
   useEffect(() => {

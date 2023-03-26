@@ -7,8 +7,8 @@ function Header({ active }) {
 
   return (
     <div className="header2">
-      <span key="headerItems" onClick={() => navigate("/items/")} className={"headerItem " + (active === "items" ? "active" : "")}>
-        Товары
+      <span key="headerItems" onClick={() => navigate("/units/")} className={"headerItem " + (active === "units" ? "active" : "")}>
+        Ед. изм.
       </span>
       <span key="headerCategories" onClick={() => navigate("/categories/")} className={"headerItem " + (active === "categories" ? "active" : "")}>
         Категории

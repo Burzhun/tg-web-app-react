@@ -1,0 +1,32 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 20px;
+}
+.form div {
+  /* margin-bottom: 10px; */
+}
+
+.orderForm .input {
+  width: 100%;
+  margin-bottom: 5px;
+  padding-top: 0;
+  margin-top: 3px;
+}
+.orderForm .input input {
+  width: 100%;
+  margin-bottom: 0;
+  margin-top: 10px;
+  padding-bottom: 10px;
+}
+
+.select {
+  padding: 10px;
+  margin-top: 15px;
+}
+
+.orderForm .counter {
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
