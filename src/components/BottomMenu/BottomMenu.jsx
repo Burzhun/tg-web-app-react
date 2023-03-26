@@ -34,7 +34,14 @@ function BottomMenu({ children }) {
         >
           Номенклатура
         </div>
-        <div className="menu">Аккаунты</div>
+        <div
+          className="menu"
+          onClick={() => {
+            navigate("/roles");
+          }}
+        >
+          Аккаунты
+        </div>
       </div>
     </div>
   );

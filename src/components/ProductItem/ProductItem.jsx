@@ -23,9 +23,7 @@ const ProductItem = ({ item, category }) => {
       .then((res) => {
         setNumber(number);
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
   };
 
   return (
@@ -33,7 +31,6 @@ const ProductItem = ({ item, category }) => {
       <div
         className={"item"}
         onClick={(e) => {
-          console.log(e.target);
           navigate("/items/add/" + item.id);
         }}
       >

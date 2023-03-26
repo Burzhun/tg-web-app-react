@@ -41,3 +41,25 @@
   cursor: pointer;
   margin-right: 15px;
 }
+
+.accounts .role {
+  font-size: 23px;
+  margin: 10px 12px;
+  width: 80px;
+  padding: 10px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.accounts .username {
+  font-size: 23px;
+  margin: 10px 12px;
+  width: 80px;
+  padding: 10px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.accounts .row {
+  border-bottom: 1px solid #bababa;
+}

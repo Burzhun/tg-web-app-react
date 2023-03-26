@@ -52,9 +52,7 @@ const CategoryItem = () => {
         openNotification();
         navigate("/category/" + category.title);
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
   };
 
   return (

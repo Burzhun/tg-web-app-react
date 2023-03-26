@@ -52,7 +52,6 @@ const OrderForm = () => {
     if (selectedItem) {
       const item = itemOptions.find((t) => t.id === selectedItem);
       usedItem = item;
-      console.log(number, item);
       //if (number > item.number) setNumber(item.number);
       itemNumberOrigin = item.number;
       if (item) setUnit(units[item.unit]);
@@ -66,14 +65,12 @@ const OrderForm = () => {
 
     items = await loadDataDB("items");
     units = await loadRelatedData("unit");
-    console.log(items, units);
 
     if (urlParams.id) {
       setOrderId(urlParams.id);
       const docRef = doc(db, "orders", urlParams.id);
       const docSnap = await getDoc(docRef);
       //const item = collection(db, "categories").doc(urlParams.id).get();
-      console.log(docSnap.data());
       if (docSnap.exists()) {
         const data = docSnap.data();
         const querySnapshot = await loadDataDB("items", where("category", "==", data.category));
@@ -115,12 +112,9 @@ const OrderForm = () => {
       updateDoc(doc(db, "orders", orderId), data)
         .then((res) => {
           openNotification();
-          console.log(itemNumberOrigin, number, orderNumberOrigin, itemNumberNew);
           updateDoc(doc(db, "items", selectedItem), { number: itemNumberNew });
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch((error) => {});
     } else {
       addDoc(dbRef, data)
         .then((docRef) => {
@@ -129,9 +123,7 @@ const OrderForm = () => {
           navigate("/orders/" + docRef.id);
           openNotification();
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch((error) => {});
     }
   };
 
@@ -154,7 +146,6 @@ const OrderForm = () => {
           placeholder="Выберите категорию"
           optionFilterProp="children"
           onChange={(value) => {
-            console.log(value);
             setCategory(value);
             loadItems(value);
           }}
@@ -171,7 +162,6 @@ const OrderForm = () => {
           placeholder="Выберите товар"
           optionFilterProp="children"
           onChange={(value) => {
-            console.log(value);
             setSelectedItem(value);
           }}
           style={{ minWidth: "100px" }}

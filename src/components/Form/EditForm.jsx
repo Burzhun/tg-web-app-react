@@ -38,7 +38,6 @@ const EditForm = () => {
       const docRef = doc(db, "items", urlParams.id);
       const docSnap = await getDoc(docRef);
       //const item = collection(db, "categories").doc(urlParams.id).get();
-      console.log(docSnap.data());
       if (docSnap.exists()) {
         const data = docSnap.data();
         setTitle(data.title || "");
@@ -62,7 +61,6 @@ const EditForm = () => {
   };
 
   const uploadItem = () => {
-    console.log("start of upload");
     // async magic goes here...
     if (imageAsFile === "") {
       saveItem(imageAsUrl || "");
@@ -76,7 +74,6 @@ const EditForm = () => {
       "state_changed",
       (snapShot) => {
         //takes a snap shot of the process as it is happening
-        console.log(snapShot);
       },
       (err) => {
         //catches the errors
@@ -106,18 +103,14 @@ const EditForm = () => {
         .then((res) => {
           openNotification();
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch((error) => {});
     } else {
       addDoc(dbRef, data)
         .then((docRef) => {
           console.log("Document has been added successfully");
           openNotification();
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch((error) => {});
     }
   };
 
@@ -144,7 +137,6 @@ const EditForm = () => {
           placeholder="Выберите категорию"
           optionFilterProp="children"
           onChange={(value) => {
-            console.log(value);
             setCategory(value);
           }}
           style={{ minWidth: "100px" }}

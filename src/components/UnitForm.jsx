@@ -20,7 +20,6 @@ const UnitForm = () => {
       const docRef = doc(db, "unit", urlParams.id);
       getDoc(docRef).then((docSnap) => {
         //const item = collection(db, "categories").doc(urlParams.id).get();
-        console.log(docSnap.data());
         if (docSnap.exists()) {
           const data = docSnap.data();
           setName(data.name || "");
@@ -39,9 +38,7 @@ const UnitForm = () => {
         console.log("Document has been added successfully");
         openNotification();
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
   };
 
   const openNotification = () => {

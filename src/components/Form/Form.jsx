@@ -33,7 +33,6 @@ const Form = () => {
   };
 
   const loadCategories = useCallback(async () => {
-    console.log(urlParams);
     setCategoriesList(await loadDataDB("categories"));
     if (urlParams.id) {
       setItemId(urlParams.id);
@@ -109,9 +108,7 @@ const Form = () => {
           openNotification();
           navigate("/items/");
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch((error) => {});
     } else {
       addDoc(dbRef, data)
         .then((docRef) => {
@@ -119,9 +116,7 @@ const Form = () => {
           openNotification();
           navigate("/items/");
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch((error) => {});
     }
   };
 
@@ -148,7 +143,6 @@ const Form = () => {
           placeholder="Выберите категорию"
           optionFilterProp="children"
           onChange={(value) => {
-            console.log(value);
             setCategory(value);
           }}
           style={{ minWidth: "100px" }}

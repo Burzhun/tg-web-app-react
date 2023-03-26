@@ -73,7 +73,6 @@ const OrdersList = () => {
       }
     });
     setOrders(orders);
-    console.log(orders, categories, items, units);
   }, []);
 
   useEffect(() => {

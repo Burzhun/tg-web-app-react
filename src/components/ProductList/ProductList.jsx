@@ -50,7 +50,6 @@ const ProductList = () => {
   const category = params.category || "";
 
   const loadData = async () => {
-    console.log(orderedItems);
     if (orderedItems) return;
     orderedItems = {};
     const orders = await loadDataDB("orders");
