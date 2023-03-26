@@ -104,6 +104,16 @@ const OrdersList = () => {
           dataSource={orders}
         />
       </div>
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <Button
+          className="orderAddButton"
+          onClick={() => {
+            navigate("/orders/add");
+          }}
+        >
+          Добавить
+        </Button>
+      </div>
     </div>
   );
 };

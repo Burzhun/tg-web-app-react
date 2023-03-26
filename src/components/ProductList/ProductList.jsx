@@ -70,10 +70,10 @@ const ProductList = () => {
       where = where("category", "==", catId);
     }
     querySnapshot = await loadDataDB("items");
-    console.log(orderedItems);
-    querySnapshot.forEach((item) => {
-      if (orderedItems[item.id]) item.number -= orderedItems[item.id];
-    });
+    // console.log(orderedItems);
+    // querySnapshot.forEach((item) => {
+    //   if (orderedItems[item.id]) item.number -= orderedItems[item.id];
+    // });
     setItems(querySnapshot);
   };
 

@@ -5,7 +5,7 @@ import { useTelegram } from "../../hooks/useTelegram";
 import { loadDataDB, db } from "../firebase/config";
 import { collection, addDoc, query, getDocs, doc, updateDoc, getDoc, where } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { NavLink, useHistory, useParams } from "react-router-dom";
+import { NavLink, useHistory, useParams, useNavigate } from "react-router-dom";
 import Header from "../Header";
 
 const loadRelatedData = async (table) => {
@@ -18,9 +18,13 @@ const loadRelatedData = async (table) => {
 };
 let items = {};
 let units = {};
+let orderNumberOrigin = 0;
+let itemNumberOrigin = 0;
+let usedItem = null;
 
 const OrderForm = () => {
   const urlParams = useParams();
+  const navigate = useNavigate();
   const [orderId, setOrderId] = useState(null);
   const [name, setName] = useState("");
   const [categoriesList, setCategoriesList] = useState([]);
@@ -33,6 +37,7 @@ const OrderForm = () => {
 
   const updateNumber = (e, number) => {
     e.stopPropagation();
+    if (usedItem && number > usedItem.number) return;
     setNumber(number);
   };
 
@@ -46,6 +51,10 @@ const OrderForm = () => {
   useEffect(() => {
     if (selectedItem) {
       const item = itemOptions.find((t) => t.id === selectedItem);
+      usedItem = item;
+      console.log(number, item);
+      //if (number > item.number) setNumber(item.number);
+      itemNumberOrigin = item.number;
       if (item) setUnit(units[item.unit]);
     }
   }, [selectedItem]);
@@ -73,6 +82,7 @@ const OrderForm = () => {
         setName(data.name || "");
         setNumber(data.number);
         setOrderNumber(data.orderNumber);
+        orderNumberOrigin = data.number;
         if (data.item) setSelectedItem(data.item);
       }
     }
@@ -91,7 +101,7 @@ const OrderForm = () => {
   };
 
   const saveItem = async () => {
-    const dbRef = collection(db, "items");
+    const dbRef = collection(db, "orders");
 
     const data = {
       category,
@@ -101,9 +111,12 @@ const OrderForm = () => {
       number,
     };
     if (orderId) {
+      const itemNumberNew = itemNumberOrigin - (number - orderNumberOrigin);
       updateDoc(doc(db, "orders", orderId), data)
         .then((res) => {
           openNotification();
+          console.log(itemNumberOrigin, number, orderNumberOrigin, itemNumberNew);
+          updateDoc(doc(db, "items", selectedItem), { number: itemNumberNew });
         })
         .catch((error) => {
           console.log(error);
@@ -112,6 +125,8 @@ const OrderForm = () => {
       addDoc(dbRef, data)
         .then((docRef) => {
           console.log("Document has been added successfully");
+          updateDoc(doc(db, "items", selectedItem), { number: itemNumberOrigin - number });
+          navigate("/orders/" + docRef.id);
           openNotification();
         })
         .catch((error) => {

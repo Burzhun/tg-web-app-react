@@ -26,6 +26,7 @@ function App() {
     <div className="App">
       <BottomMenu>
         <Header />
+        {JSON.stringify(user)}
         <Routes>
           <Route path={"orders/"} element={<OrdersList />} />
           <Route path={"orders/add"} element={<OrderForm />} />
