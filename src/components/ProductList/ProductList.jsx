@@ -36,7 +36,7 @@ const ProductList = () => {
     q = query(collection(db, "items"));
     if (category) {
       const catId = Object.keys(categories).find((c) => categories[c] === category);
-      console.log(catId);
+      console.log(catId, categories, category);
       q = query(collection(db, "items"), where("category", "==", catId));
     }
     querySnapshot = await getDocs(q);
@@ -75,7 +75,7 @@ const ProductList = () => {
 
   return (
     <div>
-      <Header />
+      <Header active="items" />
       <div style={{ textAlign: "center" }}>
         <Button
           onClick={() => {
@@ -86,6 +86,7 @@ const ProductList = () => {
           Добавить товар
         </Button>
       </div>
+      <br />
       {category && (
         <div style={{ fontSize: "20px", margin: "10px" }}>
           Товары категории <span style={{ color: "#1bb3ff" }}>{category}</span>

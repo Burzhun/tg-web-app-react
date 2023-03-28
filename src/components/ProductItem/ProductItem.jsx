@@ -39,9 +39,11 @@ const ProductItem = ({ item, category }) => {
       >
         <div className={"product"}>
           <div className="item-image">
-            <img width={100} src={item.image || "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"} />
+            <div className="imageContainer">
+              <img src={item.image || "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930"} />
+            </div>
           </div>
-          <div>
+          <div className="item-container">
             <div className={"title"}>{item.title}</div>
             <div
               onClick={(e) => {

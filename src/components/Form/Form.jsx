@@ -129,7 +129,7 @@ const Form = () => {
 
   return (
     <div className={"form"}>
-      <Header />
+      <Header active="items" />
       <h3>Добавление товара</h3>
       <Input className={"input"} type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={"Название"} />
       <Input className={"input"} type="number" value={number} onChange={(e) => setNumber(parseInt(e.target.value))} placeholder={"Количество"} />
