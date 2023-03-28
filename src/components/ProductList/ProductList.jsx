@@ -122,7 +122,7 @@ const ProductList = () => {
           <ProductItem key={item.id} category={categories[item.category]} item={item} />
         ))}
       </div> */}
-      <div className={"list"}>
+      <div>
         <Table
           columns={columns}
           onRow={(record, rowIndex) => {

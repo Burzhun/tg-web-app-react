@@ -90,7 +90,7 @@ const OrdersList = () => {
           Товары категории <span style={{ color: "#1bb3ff" }}>{category}</span>
         </div>
       )}
-      <div className={"list"}>
+      <div>
         <Table
           columns={columns}
           onRow={(record, rowIndex) => {
