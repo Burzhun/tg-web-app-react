@@ -3,7 +3,7 @@ import "./Form.css";
 import { Button, Input, notification, Select } from "antd";
 import { useTelegram } from "../../hooks/useTelegram";
 import { storage, db } from "../firebase/config";
-import { collection, addDoc, query, getDocs, doc, updateDoc, getDoc, where } from "firebase/firestore";
+import { collection, addDoc, query, getDocs, doc, deleteDoc, updateDoc, getDoc, where } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { NavLink, useHistory, useNavigate, useParams } from "react-router-dom";
 import Header from "../Header";
@@ -127,6 +127,17 @@ const Form = () => {
     }
   };
 
+  const deleteItem = async () => {
+    const dbRef = collection(db, "items");
+    await deleteDoc(doc(db, "items", itemId));
+    notification.open({
+      message: "Товар удален",
+      description: "",
+      duration: 2,
+    });
+    navigate("/items/");
+  };
+
   return (
     <div className={"form"}>
       <Header active="items" />
@@ -167,6 +178,17 @@ const Form = () => {
         type="primary"
       >
         {urlParams.id ? "Изменить товар" : "Добавить товар"}
+      </Button>
+
+      <Button
+        onClick={() => {
+          deleteItem();
+        }}
+        danger
+        style={{ marginTop: "30px" }}
+        type="primary"
+      >
+        Удалить товар
       </Button>
     </div>
   );

@@ -7,6 +7,7 @@ import { collection, addDoc, query, getDocs, where } from "firebase/firestore";
 import Header from "../Header";
 import { Button } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
+import { CloseOutlined } from "@ant-design/icons";
 
 const getTotalPrice = (items = []) => {
   return items.reduce((acc, item) => {
@@ -90,6 +91,12 @@ const ProductList = () => {
       {category && (
         <div style={{ fontSize: "20px", margin: "10px" }}>
           Товары категории <span style={{ color: "#1bb3ff" }}>{category}</span>
+          <CloseOutlined
+            onClick={() => {
+              navigate("/items/");
+            }}
+            style={{ color: "red", marginLeft: "10px", position: "relative", top: "2px" }}
+          />
         </div>
       )}
       <div className={"list"}>
